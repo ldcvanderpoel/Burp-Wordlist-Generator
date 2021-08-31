@@ -18,14 +18,16 @@ Parameters from cookies, multipart forms, and XML attributes are ignored.
 
 Furthermore, only in-scope data is collected.
 
-# Installation
+## Installation
 Inside Burp, go to Extender, select Add, set 'Extension type' to Python, and select the extension file.
 
-# Usage
-![image](https://user-images.githubusercontent.com/23482322/131515915-43f105e1-7f9f-47c0-b53c-8975eaa1b4d1.png)
+## Usage
+
+<img src="https://user-images.githubusercontent.com/23482322/131515915-43f105e1-7f9f-47c0-b53c-8975eaa1b4d1.png" height="400">
+
 
 Output can be seen by visiting the extension tab.
 
-![image](https://user-images.githubusercontent.com/23482322/131516719-e33a90c9-6c5f-4157-a700-8cdd15de6b33.png)
+<img src="https://user-images.githubusercontent.com/23482322/131516719-e33a90c9-6c5f-4157-a700-8cdd15de6b33.png" height="350">
 
 The wordlists are written to: `<extension dir>/wordlists/<Burp project name>`.
