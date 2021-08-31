@@ -31,3 +31,20 @@ Output can be seen by visiting the extension tab.
 <img src="https://user-images.githubusercontent.com/23482322/131516719-e33a90c9-6c5f-4157-a700-8cdd15de6b33.png" height="350">
 
 The wordlists are written to: `<extension dir>/wordlists/<Burp project name>`.
+
+## Further processing
+
+After creating different wordlists, they can be aggregated:
+```
+cat wordlists/*/paths.txt | sort | uniq
+cat wordlists/*/keys.txt | sort | uniq
+cat wordlists/*/values.txt | sort | uniq
+cat wordlists/*/queries.txt | sort | uniq
+cat wordlists/*/subdomains.txt | sort | uniq
+```
+
+At one point, an option for this maybe added to the extension.
+
+## A word of warning
+The generated wordlists can contain sensitive data such as usernames, password, and tokens. Review the wordlist before launching it against other systems.
+
