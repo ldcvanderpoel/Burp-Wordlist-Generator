@@ -1,22 +1,22 @@
 # Burp-Wordlist-Generator
 Everyone in offensive cyber security (pentesting/bug bounty) uses the same wordlists (SecLists, WFuzz, Assetnode, etc.). Creating your own custom wordlists is necessary to differentiate yourself from hordes of automated scanners. This Burp extension extracts various data (path, parameter keys, parameter values, subdomains, etc.) from the Burp sitemap and stores this in respective wordlist files. These wordlists can then be used for directory/dns/parameter brute-forcing.
 
-Currently, the following types of data are collected:
-- Paths
-- Subdomains
-- Parameter keys
-- Parameter values
-- Parameter key-value pairs (query)
-
-Data is only collected from the following parameter types:
-- URL
-- Body
-- JSON
-- XML
-
-Parameters from cookies, multipart forms, and XML attributes are ignored.
 
 ## Good to know
+
+- Currently, the following types of data are collected:
+  - Paths
+  - Subdomains
+  - Parameter keys
+  - Parameter values
+  - Parameter key-value pairs (query)
+
+- Data is only collected from the following parameter types. Parameters from cookies, multipart forms, and XML attributes are ignored.
+  - URL
+  - Body
+  - JSON
+  - XML
+
 
 - Only in-scope data is collected. 
 - Only unique entries are stored (per project).
