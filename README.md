@@ -23,6 +23,8 @@ Inside Burp, go to Extender, select Add, set 'Extension type' to Python, and sel
 
 ## Usage
 
+Go to the 'Target' tab and right-click the sitemap.
+
 <img src="https://user-images.githubusercontent.com/23482322/131515915-43f105e1-7f9f-47c0-b53c-8975eaa1b4d1.png" height="400">
 
 
