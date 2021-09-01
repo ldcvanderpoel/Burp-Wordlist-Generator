@@ -24,6 +24,8 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         Extension initialization.
         A unique directory is created for each seperate project.
         '''
+        sys.stdout = callbacks.getStdout()
+        sys.stderr = callbacks.getStderr()
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("Wordlist Generator")
@@ -63,7 +65,6 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         t = threading.Thread(target=self.generateWordlist)
         t.daemon = True
         t.start()
-    
 
     def generateWordlist(self):
         '''
@@ -83,29 +84,38 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.values = set()
         self.queries = set()
         self.subdomains = set()
+        count = 0
 
         # Loop over sitemap
-        for requestResponse in self._callbacks.getSiteMap(None):
+        sitemap = self._callbacks.getSiteMap(None)
+        total = len(sitemap)
+        for requestResponse in sitemap:
+            count += 1
             requestInfo = self._helpers.analyzeRequest(requestResponse)
+            url = requestInfo.getUrl().toString().encode('utf-8')   
+            method = requestInfo.getMethod().encode('utf-8')
 
             # Ignore out-of-scope requests
-            url = requestInfo.getUrl()
-            if not self._callbacks.isInScope(url):
-                print('Not in scope, skipped: ' + str(url))
+            if not self._callbacks.isInScope(requestInfo.getUrl()):
+                print('[%i/%i]: %s (Not in scope, skipped)' % (count, total, url))
                 continue
-            
+
+            print('[%i/%i]: %s %s' % (count, total, method, url))
+
             # Try to gather data
             try:
-                self.processPath(requestInfo)
-                self.processSubdomain(requestInfo)
+                self.processPath(url)
+                self.processSubdomain(url)
 
                 for param in requestInfo.getParameters():
                     self.processParams(param)
             except:
-                print('An error occured during processing of: ' + str(url)\
-                    + ' (skipped).')
+                sys.stderr.write('An error occured during processing of "%s"\n'\
+                    % url)
+                sys.stderr.flush()
+
                 
-        print('Storing wordlists.')
+        print('Storing wordlists to %s.' % self.wordlistDir)
         self.storeWordlist(self.paths, 'paths.txt')
         self.storeWordlist(self.keys, 'keys.txt')
         self.storeWordlist(self.values, 'values.txt')
@@ -113,21 +123,21 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.storeWordlist(self.subdomains, 'subdomains.txt')
         print('Done!')
 
-    def processPath(self, requestInfo):
+    def processPath(self, url):
         '''
         Extract path from URL.
+        Assumes that the url is properly UTF-8 encoded.
         '''
-        url = requestInfo.getUrl()
-        path = urlparse(str(url)).path
+        path = urlparse(url).path
         self.paths.add(path)
     
-    def processSubdomain(self, requestInfo):
+    def processSubdomain(self, url):
         '''
         Get subdomains from URL. E.g.
         acc.v1.website.com => acc.v1
+        Assumes that the url is properly UTF-8 encoded.
         '''
-        url = requestInfo.getUrl()
-        subdomain = '.'.join(urlparse(str(url)).netloc.split('.')[:-2])
+        subdomain = '.'.join(urlparse(url).netloc.split('.')[:-2])
         self.subdomains.add(subdomain)
 
     def processParams(self, param):
@@ -147,8 +157,8 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
             ]:
             return
         
-        key = self._helpers.bytesToString(param.getName())
-        value = self._helpers.bytesToString(param.getValue())
+        key = self._helpers.bytesToString(param.getName()).encode('utf-8')
+        value = self._helpers.bytesToString(param.getValue()).encode('utf-8')
         query = key + '=' + value
         self.keys.add(key)
         self.values.add(value)
@@ -173,3 +183,4 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 projectTitle = frame.getTitle().split('-')[1].strip()
                 # NOTE: This does not work for project names containing '-'.
                 return projectTitle
+
