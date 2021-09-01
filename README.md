@@ -16,7 +16,11 @@ Data is only collected from the following parameter types:
 
 Parameters from cookies, multipart forms, and XML attributes are ignored.
 
-Furthermore, only in-scope data is collected. Only unique entries are stored (per project).
+## Good to know
+
+- Only in-scope data is collected. 
+- Only unique entries are stored (per project).
+- The sitemap selection is ignored. The entire sitemap is processed each time.
 
 ## Installation
 Inside Burp, go to Extender, select Add, set 'Extension type' to Python, and select the extension file.
