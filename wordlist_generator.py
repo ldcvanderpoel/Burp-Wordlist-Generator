@@ -13,7 +13,7 @@ from urlparse import urlparse
 from burp import IBurpExtender
 from burp import IContextMenuFactory
 from java.util import ArrayList
-from javax.swing import JMenuItem
+from javax.swing import JMenuItem, JRadioButton
 from burp.IParameter import PARAM_BODY,PARAM_JSON,PARAM_URL,PARAM_XML
 from burp.IContextMenuInvocation import CONTEXT_TARGET_SITE_MAP_TREE
 from java.awt import Frame
@@ -49,24 +49,47 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         if context != CONTEXT_TARGET_SITE_MAP_TREE:
             return
 
-        self.context = invocation
         menuList = ArrayList()
-        menuItem = JMenuItem("Generate wordlist from sitemap",
-                                actionPerformed=self.menuAction)
+        menuItem = JMenuItem("Generate wordlist from entire sitemap",
+                                actionPerformed=self.menuActionFull)
         menuList.add(menuItem)
+
+        self.selection = invocation.getSelectedMessages()
+        if len(self.selection) > 0:
+            menuItem = JMenuItem("Generate wordlist from selection",
+                                actionPerformed=self.menuActionSelection)
+            menuList.add(menuItem)
         return menuList
 
 
-    def menuAction(self, event):
+    # TODO: Two menu actions is ugly, but I'm not sure how to pass
+    # arguments to `actionPerformed` in `JMenuItem`. Perhaps inspiration
+    # can be drawn from Autorize:
+    # https://github.com/Quitten/Autorize/blob/ce5479755cb152c0b65185b3d484665852d66506/gui/menu.py
+    def menuActionFull(self, event):
         '''
         Basic threaded menu action.
         Prevents the UI from freezing.
         '''
-        t = threading.Thread(target=self.generateWordlist)
+        
+        sitemap = self._callbacks.getSiteMap(None)
+        t = threading.Thread(target=self.generateWordlist, args=(sitemap,))
         t.daemon = True
         t.start()
 
-    def generateWordlist(self):
+
+    def menuActionSelection(self, event):
+        '''
+        Basic threaded menu action.
+        Prevents the UI from freezing.
+        '''
+        
+        selection = self.selection
+        t = threading.Thread(target=self.generateWordlist, args=(selection,))
+        t.daemon = True
+        t.start()
+
+    def generateWordlist(self, requestResponses):
         '''
         Loop over the sitemap and add collect data for the wordlists.
         Only in-scope items are considered.
@@ -87,9 +110,8 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         count = 0
 
         # Loop over sitemap
-        sitemap = self._callbacks.getSiteMap(None)
-        total = len(sitemap)
-        for requestResponse in sitemap:
+        total = len(requestResponses)
+        for requestResponse in requestResponses:
             count += 1
             requestInfo = self._helpers.analyzeRequest(requestResponse)
             url = requestInfo.getUrl().toString().encode('utf-8')   
@@ -115,7 +137,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 sys.stderr.flush()
 
                 
-        print('Storing wordlists to %s.' % self.wordlistDir)
+        print('Storing wordlists to %s' % self.wordlistDir)
         self.storeWordlist(self.paths, 'paths.txt')
         self.storeWordlist(self.keys, 'keys.txt')
         self.storeWordlist(self.values, 'values.txt')
