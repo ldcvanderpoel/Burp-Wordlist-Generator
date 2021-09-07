@@ -1,22 +1,26 @@
 # Burp-Wordlist-Generator
 Everyone in offensive cyber security (pentesting/bug bounty) uses the same wordlists (SecLists, WFuzz, Assetnode, etc.). Creating your own custom wordlists is necessary to differentiate yourself from hordes of automated scanners. This Burp extension extracts various data (path, parameter keys, parameter values, subdomains, etc.) from the Burp sitemap and stores this in respective wordlist files. These wordlists can then be used for directory/dns/parameter brute-forcing.
 
-Currently, the following types of data are collected:
-- Paths
-- Subdomains
-- Parameter keys
-- Parameter values
-- Parameter key-value pairs (query)
 
-Data is only collected from the following parameter types:
-- URL
-- Body
-- JSON
-- XML
+## Good to know
 
-Parameters from cookies, multipart forms, and XML attributes are ignored.
+- Currently, the following types of data are collected:
+  - Paths
+  - Subdomains
+  - Parameter keys
+  - Parameter values
+  - Parameter key-value pairs (query)
 
-Furthermore, only in-scope data is collected. Only unique entries are stored (per project).
+- Data is only collected from the following parameter types. Parameters from cookies, multipart forms, and XML attributes are ignored.
+  - URL
+  - Body
+  - JSON
+  - XML
+
+
+- Only in-scope data is collected. 
+- Only unique entries are stored (per project).
+- The sitemap selection is ignored. The entire sitemap is processed each time.
 
 ## Installation
 Inside Burp, go to Extender, select Add, set 'Extension type' to Python, and select the extension file.
@@ -30,7 +34,7 @@ Go to the 'Target' tab and right-click the sitemap.
 
 Output can be seen by visiting the extension tab.
 
-<img src="https://user-images.githubusercontent.com/23482322/131516719-e33a90c9-6c5f-4157-a700-8cdd15de6b33.png" height="350">
+<img src="https://user-images.githubusercontent.com/23482322/131701222-d89d33d1-23e2-4ebe-af39-06c51bd34fc3.png" height="350">
 
 The wordlists are written to: `<extension dir>/wordlists/<Burp project name>`.
 
