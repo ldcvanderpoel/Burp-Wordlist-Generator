@@ -1,5 +1,7 @@
 # Burp-Wordlist-Generator
-Everyone in offensive cyber security (pentesting/bug bounty) uses the same wordlists (SecLists, WFuzz, Assetnode, etc.). Creating your own custom wordlists is necessary to differentiate yourself from hordes of automated scanners. This Burp extension extracts various data (path, parameter keys, parameter values, subdomains, etc.) from the Burp sitemap and stores this in respective wordlist files. These wordlists can then be used for directory/dns/parameter brute-forcing.
+Generates wordlists from the Burp sitemap.
+
+Everyone in offensive cyber security (pentesting/bug bounty) uses the same wordlists (SecLists, WFuzz, Assetnode, etc.). Creating your own custom wordlists is necessary to differentiate yourself from hordes of automated scanners. This Burp extension extracts various kinds of data (path, parameter keys, parameter values, subdomains, etc.) from the Burp sitemap and stores this in respective wordlist files. These wordlists can then be used for directory/dns/parameter brute-forcing.
 
 
 ## Good to know
@@ -20,7 +22,7 @@ Everyone in offensive cyber security (pentesting/bug bounty) uses the same wordl
 
 - Only in-scope data is collected. 
 - Only unique entries are stored (per project).
-- The sitemap selection is ignored. The entire sitemap is processed each time.
+- Either select the entire sitemap, only process the selected endpoints.
 
 ## Installation
 Inside Burp, go to Extender, select Add, set 'Extension type' to Python, and select the extension file.
