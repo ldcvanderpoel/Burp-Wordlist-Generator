@@ -51,7 +51,7 @@ cat wordlists/*/queries.txt | sort | uniq
 cat wordlists/*/subdomains.txt | sort | uniq
 ```
 
-At one point, an option for this maybe added to the extension.
+At one point, an option for this may be added to the extension.
 
 ## A word of warning
 The generated wordlists can contain sensitive data such as usernames, password, and tokens. Review the wordlist before launching it against other systems.
